@@ -654,7 +654,7 @@ public class MapleClient {
 			if (!rs.next()) {
 				return null;
 			}
-			long blubb = rs.getLong("tempban");
+			long blubb = rs.getTimestamp("tempban").getTime();
 			
 			if (blubb == 0 || rs.getString("tempban").equals("2018-06-20 00:00:00.0")) { // 0000-00-00 or 2018-06-20 (default set in LoginPasswordHandler)
 				return null;

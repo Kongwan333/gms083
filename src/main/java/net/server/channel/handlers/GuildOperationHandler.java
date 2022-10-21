@@ -32,6 +32,8 @@ import tools.MaplePacketCreator;
 import client.MapleCharacter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
+
 import net.server.Server;
 import net.server.coordinator.matchchecker.MatchCheckerListenerFactory.MatchCheckerType;
 import net.server.guild.MapleAlliance;
@@ -43,12 +45,12 @@ public final class GuildOperationHandler extends AbstractMaplePacketHandler {
         if (name.length() < 3 || name.length() > 12) {
             return false;
         }
-        for (int i = 0; i < name.length(); i++) {
-            if (!Character.isLowerCase(name.charAt(i)) && !Character.isUpperCase(name.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
+//        for (int i = 0; i < name.length(); i++) {
+//            if (!Character.isLowerCase(name.charAt(i)) && !Character.isUpperCase(name.charAt(i))) {
+//                return false;
+//            }
+//        }
+        return Pattern.compile("[A-Za-z0-9\\u4e00-\\u9fa5]{3,12}").matcher(name).matches();
     }
 
     @Override

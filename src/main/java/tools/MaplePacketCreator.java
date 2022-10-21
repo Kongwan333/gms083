@@ -4038,7 +4038,7 @@ public class MaplePacketCreator {
                         lew.writeInt(partychar.getId());
                 }
                 for (MaplePartyCharacter partychar : partymembers) {
-                        lew.writeAsciiString(getRightPaddedStr(partychar.getName(), '\0', 13));
+                        lew.writeAsciiString(StringUtil.getRightPaddedStr(partychar.getName(), '\0', 13));
                 }
                 for (MaplePartyCharacter partychar : partymembers) {
                         lew.writeInt(partychar.getJobId());
@@ -4318,10 +4318,10 @@ public class MaplePacketCreator {
                 for (BuddylistEntry buddy : buddylist) {
                         if (buddy.isVisible()) {
                                 mplew.writeInt(buddy.getCharacterId()); // cid
-                                mplew.writeAsciiString(getRightPaddedStr(buddy.getName(), '\0', 13));
+                                mplew.writeAsciiString(StringUtil.getRightPaddedStr(buddy.getName(), '\0', 13));
                                 mplew.write(0); // opposite status
                                 mplew.writeInt(buddy.getChannel() - 1);
-                                mplew.writeAsciiString(getRightPaddedStr(buddy.getGroup(), '\0', 13));
+                                mplew.writeAsciiString(StringUtil.getRightPaddedStr(buddy.getGroup(), '\0', 13));
                                 mplew.writeInt(0);//mapid?
                         }
                 }
@@ -4345,7 +4345,7 @@ public class MaplePacketCreator {
                 mplew.writeInt(cidFrom);
                 mplew.writeMapleAsciiString(nameFrom);
                 mplew.writeInt(cidFrom);
-                mplew.writeAsciiString(getRightPaddedStr(nameFrom, '\0', 11));
+                mplew.writeAsciiString(StringUtil.getRightPaddedStr(nameFrom, '\0', 11));
                 mplew.write(0x09);
                 mplew.write(0xf0);
                 mplew.write(0x01);
@@ -4548,7 +4548,7 @@ public class MaplePacketCreator {
                         mplew.writeInt(mgc.getId());
                 }
                 for (MapleGuildCharacter mgc : members) {
-                        mplew.writeAsciiString(getRightPaddedStr(mgc.getName(), '\0', 13));
+                        mplew.writeAsciiString(StringUtil.getRightPaddedStr(mgc.getName(), '\0', 13));
                         mplew.writeInt(mgc.getJobId());
                         mplew.writeInt(mgc.getLevel());
                         mplew.writeInt(mgc.getGuildRank());
@@ -4641,7 +4641,7 @@ public class MaplePacketCreator {
                 mplew.write(0x27);
                 mplew.writeInt(mgc.getGuildId());
                 mplew.writeInt(mgc.getId());
-                mplew.writeAsciiString(getRightPaddedStr(mgc.getName(), '\0', 13));
+                mplew.writeAsciiString(StringUtil.getRightPaddedStr(mgc.getName(), '\0', 13));
                 mplew.writeInt(mgc.getJobId());
                 mplew.writeInt(mgc.getLevel());
                 mplew.writeInt(mgc.getGuildRank()); //should be always 5 but whatevs
@@ -7251,7 +7251,7 @@ public class MaplePacketCreator {
                         mplew.writeInt(mgc.getId());
                 }
                 for (MapleGuildCharacter mgc : members) {
-                        mplew.writeAsciiString(getRightPaddedStr(mgc.getName(), '\0', 13));
+                        mplew.writeAsciiString(StringUtil.getRightPaddedStr(mgc.getName(), '\0', 13));
                         mplew.writeInt(mgc.getJobId());
                         mplew.writeInt(mgc.getLevel());
                         mplew.writeInt(mgc.getGuildRank());
@@ -7672,13 +7672,13 @@ public class MaplePacketCreator {
                 return mplew.getPacket();
         }
 
-        private static String getRightPaddedStr(String in, char padchar, int length) {
-                StringBuilder builder = new StringBuilder(in);
-                for (int x = in.length(); x < length; x++) {
-                        builder.append(padchar);
-                }
-                return builder.toString();
-        }
+//        private static String getRightPaddedStr(String in, char padchar, int length) {
+//                StringBuilder builder = new StringBuilder(in);
+//                for (int x = in.length(); x < length; x++) {
+//                        builder.append(padchar);
+//                }
+//                return builder.toString();
+//        }
 
         public static byte[] MobDamageMobFriendly(MapleMonster mob, int damage, int remainingHp) {
                 final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -7704,7 +7704,7 @@ public class MaplePacketCreator {
                 mplew.writeShort(chr.getCrushRings().size());
                 for (MapleRing ring : chr.getCrushRings()) {
                         mplew.writeInt(ring.getPartnerChrId());
-                        mplew.writeAsciiString(getRightPaddedStr(ring.getPartnerName(), '\0', 13));
+                        mplew.writeAsciiString(StringUtil.getRightPaddedStr(ring.getPartnerName(), '\0', 13));
                         mplew.writeInt(ring.getRingId());
                         mplew.writeInt(0);
                         mplew.writeInt(ring.getPartnerRingId());
@@ -7713,7 +7713,7 @@ public class MaplePacketCreator {
                 mplew.writeShort(chr.getFriendshipRings().size());
                 for (MapleRing ring : chr.getFriendshipRings()) {
                         mplew.writeInt(ring.getPartnerChrId());
-                        mplew.writeAsciiString(getRightPaddedStr(ring.getPartnerName(), '\0', 13));
+                        mplew.writeAsciiString(StringUtil.getRightPaddedStr(ring.getPartnerName(), '\0', 13));
                         mplew.writeInt(ring.getRingId());
                         mplew.writeInt(0);
                         mplew.writeInt(ring.getPartnerRingId());
