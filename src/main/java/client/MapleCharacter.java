@@ -2651,9 +2651,17 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
             List<MapleBuffStatValueHolder> mbsvhList = getAllStatups();
             for (MapleBuffStatValueHolder mbsvh : mbsvhList) {
                 if (mbsvh.effect.isSkill()) {
-                    if (mbsvh.effect.getBuffSourceId() != Aran.COMBO_ABILITY) { // check discovered thanks to Croosade dev team
-                        cancelEffect(mbsvh.effect, false, mbsvh.startTime);
+                    if (mbsvh.effect.getBuffSourceId() == Magician.MAGIC_GUARD) {
+                        continue; // magic shield
                     }
+                    if (mbsvh.effect.getBuffSourceId() == Beginner.ECHO_OF_HERO || mbsvh.effect.getBuffSourceId() == Noblesse.ECHO_OF_HERO
+                            || mbsvh.effect.getBuffSourceId() == Legend.ECHO_OF_HERO) {
+                        continue; // echo of hero
+                    }
+                    if (mbsvh.effect.getBuffSourceId() == Aran.COMBO_ABILITY) {
+                        continue; // combo ability
+                    }
+                    cancelEffect(mbsvh.effect, false, mbsvh.startTime);
                 }
             }
         }
