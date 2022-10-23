@@ -20,7 +20,7 @@ public class YamlConfig {
     public static YamlConfig fromFile(String filename) {
         try {
             ClassPathResource classPathResource = new ClassPathResource(filename);
-            YamlReader reader = new YamlReader(classPathResource.getReader(Charset.defaultCharset()));
+            YamlReader reader = new YamlReader(classPathResource.getReader(Charset.forName("GBK")));
             YamlConfig config = reader.read(YamlConfig.class);
             reader.close();
             return config;

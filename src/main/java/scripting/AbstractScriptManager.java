@@ -23,13 +23,13 @@ package scripting;
 
 import client.MapleClient;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
 
 import javax.script.*;
 
 import cn.hutool.core.io.resource.ClassPathResource;
+import com.esotericsoftware.yamlbeans.YamlReader;
 import constants.net.ServerConstants;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import tools.FilePrinter;
@@ -54,7 +54,7 @@ public abstract class AbstractScriptManager {
             return null;
         }
         NashornScriptEngine engine = (NashornScriptEngine) sef.getScriptEngine();
-        try (FileReader fr = new FileReader(scriptFile)) {
+        try (InputStreamReader fr = new InputStreamReader(new FileInputStream(scriptFile), "GBK")) {
             if (ServerConstants.JAVA_8){
                 engine.eval("load('nashorn:mozilla_compat.js');" + System.lineSeparator());
             }
