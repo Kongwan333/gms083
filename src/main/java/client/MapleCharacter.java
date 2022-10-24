@@ -51,6 +51,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.HashMap;
 
 import config.YamlConfig;
 import net.server.PlayerBuffValueHolder;
@@ -186,6 +187,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
     private static final String[] BLOCKED_NAMES = {"admin", "owner", "moderator", "intern", "donor", "administrator", "FREDRICK", "help", "helper", "alert", "notice", "maplestory", "fuck", "wizet", "fucking", "negro", "fuk", "fuc", "penis", "pussy", "asshole", "gay",
         "nigger", "homo", "suck", "cum", "shit", "shitty", "condom", "security", "official", "rape", "nigga", "sex", "tit", "boner", "orgy", "clit", "asshole", "fatass", "bitch", "support", "gamemaster", "cock", "gaay", "gm",
         "operate", "master", "sysop", "party", "GameMaster", "community", "message", "event", "test", "meso", "Scania", "yata", "AsiaSoft", "henesys"};
+    private  static final Map<Integer, Integer> CANDY_2_CHANGE = new HashMap<Integer, Integer>(){{ put(4033870, 100); put(4033869, 30); put(4033868, 15); put(4033867, 5); }};
     
     private int world;
     private int accountid, id, level;
@@ -2064,7 +2066,12 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
 
                 Item mItem = mapitem.getItem();
                 boolean hasSpaceInventory = true;
-                if (mapitem.getItemId() == 4031865 || mapitem.getItemId() == 4031866 || mapitem.getMeso() > 0 || ii.isConsumeOnPickup(mapitem.getItemId()) || (hasSpaceInventory = MapleInventoryManipulator.checkSpace(client, mapitem.getItemId(), mItem.getQuantity(), mItem.getOwner()))) {
+                // I Hate Hard Code
+                int itemId = mapitem.getItemId();
+                boolean isMysteriousCandy = (itemId >= 4033867 && itemId <= 4033870);
+                boolean isNxCard = (itemId == 4031865 || itemId == 4031866);
+                boolean isMeso = mapitem.getMeso() > 0;
+                if (isNxCard || isMeso || ii.isConsumeOnPickup(mapitem.getItemId()) || (hasSpaceInventory = MapleInventoryManipulator.checkSpace(client, mapitem.getItemId(), mItem.getQuantity(), mItem.getOwner()))) {
                     int mapId = this.getMapId();
                     
                     if ((mapId > 209000000 && mapId < 209000016) || (mapId >= 990000500 && mapId <= 990000502)) {//happyville trees and guild PQ
@@ -2082,7 +2089,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
                                 }
                                 
                                 this.getMap().pickItemDrop(pickupPacket, mapitem);
-                            } else if(mapitem.getItemId() == 4031865 || mapitem.getItemId() == 4031866) {
+                            } else if(isNxCard) {
                                 // Add NX to account, show effect and make item disappear
                                 int nxGain = mapitem.getItemId() == 4031865 ? 100 : 250;
                                 this.getCashShop().gainCash(1, nxGain);
@@ -2111,7 +2118,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
                         return;
                     }
                     
-                    if (mapitem.getMeso() > 0) {
+                    if (isMeso) {
                         if (!mpcs.isEmpty()) {
                             int mesosamm = mapitem.getMeso() / mpcs.size();
                             for (MapleCharacter partymem : mpcs) {
@@ -2122,7 +2129,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
                         } else {
                             this.gainMeso(mapitem.getMeso(), true, true, false);
                         }
-                    } else if (mItem.getItemId() / 10000 == 243) {
+                    } else if (mItem.getItemId() / 10000 == 243) { // what is this?
                         ScriptedItem info = ii.getScriptedItemInfo(mItem.getItemId());
                         if (info != null && info.runOnPickup()) {
                             itemScript = info;
@@ -2132,13 +2139,28 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
                                 return;
                             }
                         }
-                    } else if(mapitem.getItemId() == 4031865 || mapitem.getItemId() == 4031866) {
+                    } else if(isNxCard) {
                         // Add NX to account, show effect and make item disappear
                         int nxGain = mapitem.getItemId() == 4031865 ? 100 : 250;
                         this.getCashShop().gainCash(1, nxGain);
-                        
-                        showHint("You have earned #e#b" + nxGain + " NX#k#n. (" + this.getCashShop().getCash(1) + " NX)", 300);
+
+                        showHint("恭喜获得 #e#b" + nxGain + " 点券#k#n. (" + this.getCashShop().getCash(1) + " 点券)", 300);
                     } else if (applyConsumeOnPickup(mItem.getItemId())) {
+                    } else if (isMysteriousCandy) {
+                        int hpmpChange = CANDY_2_CHANGE.get(itemId);
+                        if (getClientMaxHp() < 30000) {
+                            int maxHp = getClientMaxHp();
+                            int updateHp = Math.min(maxHp + hpmpChange, 30000);
+                            updateMaxHpMaxMp(updateHp, getClientMaxMp());
+                            showHint("神秘糖果为你增加了 #e#b" + hpmpChange + " Hp#k#n.", 300);
+                        } else if (getClientMaxMp() < 30000) {
+                            int maxMp = getClientMaxMp();
+                            int updateMp = Math.min(maxMp + hpmpChange, 30000);
+                            updateMaxHpMaxMp(getClientMaxHp(), updateMp);
+                            showHint("神秘糖果为你增加了 #e#b" + hpmpChange + " Mp#k#n.", 300);
+                        } else {
+                            MapleInventoryManipulator.addFromDrop(client, mItem, true);
+                        }
                     } else if (MapleInventoryManipulator.addFromDrop(client, mItem, true)) {
                         if (mItem.getItemId() == 4031868) {
                             updateAriantScore();
