@@ -1292,6 +1292,64 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
             }
         }
     }
+
+    public synchronized void changeJobOnly(MapleJob newJob) {
+        if (newJob == null) {
+            return;//the fuck you doing idiot!
+        }
+
+        if (canRecvPartySearchInvite && getParty() == null) {
+            this.updatePartySearchAvailability(false);
+            this.job = newJob;
+            this.updatePartySearchAvailability(true);
+        } else {
+            this.job = newJob;
+        }
+
+        effLock.lock();
+        statWlock.lock();
+        try {
+            List<Pair<MapleStat, Integer>> statup = new ArrayList<>(1);
+            statup.add(new Pair<>(MapleStat.JOB, job.getId()));
+            client.announce(MaplePacketCreator.updatePlayerStats(statup, true, this));
+        } finally {
+            statWlock.unlock();
+            effLock.unlock();
+        }
+
+        setMPC(new MaplePartyCharacter(this));
+        silentPartyUpdate();
+
+        if (dragon != null) {
+            getMap().broadcastMessage(MaplePacketCreator.removeDragon(dragon.getObjectId()));
+            dragon = null;
+        }
+
+        if (this.guildid > 0) {
+            getGuild().broadcast(MaplePacketCreator.jobMessage(0, job.getId(), name), this.getId());
+        }
+        MapleFamily family = getFamily();
+        if(family != null) {
+            family.broadcast(MaplePacketCreator.jobMessage(1, job.getId(), name), this.getId());
+        }
+        setMasteries(this.job.getId());
+        guildUpdate();
+
+        broadcastChangeJob();
+
+        if (GameConstants.hasSPTable(newJob) && newJob.getId() != 2001) {
+            if (getBuffedValue(MapleBuffStat.MONSTER_RIDING) != null) {
+                cancelBuffStats(MapleBuffStat.MONSTER_RIDING);
+            }
+            createDragon();
+        }
+
+        if (YamlConfig.config.server.USE_ANNOUNCE_CHANGEJOB) {
+            if (!this.isGM()) {
+                broadcastAcquaintances(6, "[" + GameConstants.ordinal(GameConstants.getJobBranch(newJob)) + " Job] " + name + " has just become a " + GameConstants.getJobName(this.job.getId()) + ".");    // thanks Vcoc for noticing job name appearing in uppercase here
+            }
+        }
+    }
     
     public void broadcastAcquaintances(int type, String message) {
         broadcastAcquaintances(MaplePacketCreator.serverNotice(type, message));

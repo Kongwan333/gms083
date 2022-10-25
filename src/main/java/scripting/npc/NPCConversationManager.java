@@ -372,6 +372,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 		getPlayer().changeJob(MapleJob.getById(a));
 	}
 
+	public void changeJobOnlyById(int a) {
+		getPlayer().changeJobOnly(MapleJob.getById(a));
+	}
+
 	public void changeJob(MapleJob job) {
 		getPlayer().changeJob(job);
 	}
