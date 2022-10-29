@@ -115,6 +115,7 @@ import tools.packets.Fishing;
 public class World {
 
     private int id, flag, exprate, droprate, bossdroprate, mesorate, questrate, travelrate, fishingrate;
+    private int mobrate, mobhprate;
     private String eventmsg;
     private List<Channel> channels = new ArrayList<>();
     private Map<Integer, Byte> pnpcStep = new HashMap<>();
@@ -199,6 +200,8 @@ public class World {
         this.questrate = questrate;
         this.travelrate = travelrate;
         this.fishingrate = fishingrate;
+        this.mobrate = 1;
+        this.mobhprate = 1;
         runningPartyId.set(1000000001); // partyid must not clash with charid to solve update item looting issues, found thanks to Vcoc
         runningMessengerId.set(1);
         
@@ -349,6 +352,18 @@ public class World {
             if(!chr.isLoggedin()) continue;
             chr.setWorldRates();
         }
+    }
+
+    public int getMobrate() { return mobrate; }
+
+    public void setMobrate(int mobrate) {
+        this.mobrate = mobrate;
+    }
+
+    public int getMobhprate() { return mobhprate; }
+
+    public void setMobhprate(int mobhprate) {
+        this.mobhprate = mobhprate;
     }
 
     public int getDropRate() {

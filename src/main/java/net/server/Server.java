@@ -59,18 +59,7 @@ import net.server.coordinator.session.MapleSessionCoordinator;
 import net.server.guild.MapleAlliance;
 import net.server.guild.MapleGuild;
 import net.server.guild.MapleGuildCharacter;
-import net.server.task.BossLogTask;
-import net.server.task.CharacterDiseaseTask;
-import net.server.task.CouponTask;
-import net.server.task.EventRecallCoordinatorTask;
-import net.server.task.DueyFredrickTask;
-import net.server.task.InvitationTask;
-import net.server.task.LoginCoordinatorTask;
-import net.server.task.LoginStorageTask;
-import net.server.task.RankingCommandTask;
-import net.server.task.RankingLoginTask;
-import net.server.task.ReleaseLockTask;
-import net.server.task.RespawnTask;
+import net.server.task.*;
 import net.server.world.World;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -984,6 +973,7 @@ public class Server {
         tMan.register(new DueyFredrickTask(), 60 * 60 * 1000, timeLeft);
         tMan.register(new InvitationTask(), 30 * 1000, 30 * 1000);
         tMan.register(new RespawnTask(), YamlConfig.config.server.RESPAWN_INTERVAL, YamlConfig.config.server.RESPAWN_INTERVAL);
+        tMan.register(new DarknessMob(), 15 * 1000, 15 * 1000);
         
         timeLeft = getTimeLeftForNextDay();
         MapleExpeditionBossLog.resetBossLogTable();

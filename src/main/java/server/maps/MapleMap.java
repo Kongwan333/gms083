@@ -3721,9 +3721,10 @@ public class MapleMap {
         System.out.println("try " + monsterSpawn.size() + " - " + spawnedMonstersOnMap.get());
         System.out.println("----------------------------------");
         */
-        
+
+        int mobrate = getWorldServer().getMobrate();
         if(YamlConfig.config.server.USE_ENABLE_FULL_RESPAWN) {
-            return (monsterSpawn.size() - spawnedMonstersOnMap.get());
+            return (monsterSpawn.size() * mobrate - spawnedMonstersOnMap.get());
         }
         
         int maxNumShouldSpawn = (int) Math.ceil(getCurrentSpawnRate(numPlayers) * monsterSpawn.size());
@@ -3746,7 +3747,9 @@ public class MapleMap {
         } finally {
             chrRLock.unlock();
         }
-        
+
+        int mobrate = getWorldServer().getMobrate();
+        int mobhprate = getWorldServer().getMobhprate();
         int numShouldSpawn = getNumShouldSpawn(numPlayers);
         if(numShouldSpawn > 0) {
             List<SpawnPoint> randomSpawn = new ArrayList<>(getMonsterSpawn());
@@ -3754,9 +3757,18 @@ public class MapleMap {
             short spawned = 0;
             for(SpawnPoint spawnPoint : randomSpawn) {
                 if(spawnPoint.shouldSpawn()) {
-                    spawnMonster(spawnPoint.getMonster());
-                    spawned++;
-                    
+                    for (int i = 0; i < mobrate; i++) {
+                        MapleMonster monster = spawnPoint.getMonster();
+                        if (!monster.isBoss()) {
+                            monster.setStartingHp(monster.getHp() * mobhprate);
+                        }
+                        spawnMonster(monster);
+                        spawned++;
+                        if (monster.isBoss()) {
+                            break;
+                        }
+                    }
+
                     if(spawned >= numShouldSpawn) {
                         break;
                     }
