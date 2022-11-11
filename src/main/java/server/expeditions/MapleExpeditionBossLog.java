@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import client.MapleCharacter;
 import config.YamlConfig;
 import tools.DatabaseConnection;
 import tools.Pair;
@@ -44,7 +45,9 @@ public class MapleExpeditionBossLog {
         HORNTAIL(2, 1, false),
         PINKBEAN(1, 1, false),
         SCARGA(1, 1, false),
-        PAPULATUS(2, 1, false);
+        PAPULATUS(2, 1, false),
+        KERXEL(2, 1, false),
+        SHAOLINTEMPLE(2, 1, false);
         
         private int entries;
         private int timeLength;
@@ -204,5 +207,22 @@ public class MapleExpeditionBossLog {
             insertPlayerEntry(cid, boss);
         }
         return true;
+    }
+
+    public static int getBossAttemptCount(int cid, String bossName) {
+        BossLogEntry boss = BossLogEntry.getBossEntryByName(bossName);
+        if (boss == null) {
+            return 0;
+        }
+        return countPlayerEntries(cid, boss);
+    }
+
+    public static void addBossAttemptCount(List<Integer> cidList, String bossName) {
+        BossLogEntry boss = BossLogEntry.getBossEntryByName(bossName);
+        if (boss != null) {
+            for (Integer cid : cidList) {
+                insertPlayerEntry(cid, boss);
+            }
+        }
     }
 }

@@ -34,11 +34,18 @@ public class DarknessMob implements Runnable {
     @Override
     public void run() {
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         boolean matchRange = false;
-        int curHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int curMin = calendar.get(Calendar.MINUTE);
+        long curTime = calendar.getTimeInMillis();
         for (DarknessTimeRange range : timeRanges) {
-            if (curHour >= range.startHour && curMin >= range.startMin && curHour <= range.endHour && curMin <= range.endMin) {
+            calendar.set(Calendar.HOUR_OF_DAY, range.startHour);
+            calendar.set(Calendar.MINUTE, range.startMin);
+            long startTime = calendar.getTimeInMillis();
+            calendar.set(Calendar.HOUR_OF_DAY, range.endHour);
+            calendar.set(Calendar.MINUTE, range.endMin);
+            long endTime = calendar.getTimeInMillis();
+            if (curTime >= startTime && curTime <= endTime) {
                 matchRange = true;
                 break;
             }

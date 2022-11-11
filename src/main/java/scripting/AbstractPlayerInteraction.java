@@ -1122,6 +1122,18 @@ public class AbstractPlayerInteraction {
         }
     }
 
+    public int getBossLog(MapleCharacter player, String boss) {
+        return MapleExpeditionBossLog.getBossAttemptCount(player.getId(), boss);
+    }
+
+    public void setBossLog(List<MapleCharacter> playerList, String boss) {
+        ArrayList<Integer> cidList = new ArrayList<>();
+        for (MapleCharacter p : playerList) {
+            cidList.add(p.getId());
+        }
+        MapleExpeditionBossLog.addBossAttemptCount(cidList, boss);
+    }
+
     public void endExpedition(MapleExpedition exped) {
         exped.dispose(true);
         exped.removeChannelExpedition(getPlayer().getClient().getChannelServer());
