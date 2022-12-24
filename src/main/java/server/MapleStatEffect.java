@@ -1340,6 +1340,14 @@ public class MapleStatEffect {
                 buff = MaplePacketCreator.givePirateBuff(statups, sourceid, seconds);
                 mbuff = MaplePacketCreator.giveForeignPirateBuff(applyto.getId(), sourceid, seconds, localstatups);
             } else if (isWkCharge()) {
+                // conflict with combo bat
+                if (sourceid == Paladin.SWORD_HOLY_CHARGE || sourceid == Paladin.BW_HOLY_CHARGE) {
+                    MapleStatEffect combo = applyto.getBuffEffect(MapleBuffStat.COMBO);
+                    if (combo != null) {
+                        applyto.cancelEffectFromBuffStat(MapleBuffStat.COMBO);
+                        applyto.cancelBuffStats(MapleBuffStat.COMBO);
+                    }
+                }
                 mbuff = MaplePacketCreator.giveForeignWKChargeEffect(applyto.getId(), sourceid, localstatups);
             } else if (isInfusion()) {
                 buff = MaplePacketCreator.givePirateBuff(localstatups, sourceid, seconds);
@@ -1351,6 +1359,13 @@ public class MapleStatEffect {
                 List<Pair<MapleBuffStat, Integer>> dsstat = Collections.singletonList(new Pair<>(MapleBuffStat.WIND_WALK, 0));
                 mbuff = MaplePacketCreator.giveForeignBuff(applyto.getId(), dsstat);
             } else if (isCombo()) {
+                // conflict with holy wk
+                MapleStatEffect wk = applyto.getBuffEffect(MapleBuffStat.WK_CHARGE);
+                if (wk != null && (wk.sourceid == Paladin.SWORD_HOLY_CHARGE || wk.sourceid == Paladin.BW_HOLY_CHARGE)) {
+                    applyto.cancelEffectFromBuffStat(MapleBuffStat.WK_CHARGE);
+                    applyto.cancelBuffStats(MapleBuffStat.WK_CHARGE);
+                }
+
                 Integer comboCount = applyto.getBuffedValue(MapleBuffStat.COMBO);
                 if (comboCount == null) comboCount = 0;
                 
